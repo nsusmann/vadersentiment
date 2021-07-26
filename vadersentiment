@@ -1,0 +1,52 @@
+# open command prompt
+# import nltk
+# nltk.download()
+# pip3 install pandas
+# pip3 installs sci-kitlearn
+# pip3 install matplotlib
+# pip3 install seaborn
+# pip3 install vaderSentiment
+#pip3 install openpyxl
+#pip3 install win_unicode_console
+
+import pandas as pd
+import nltk
+import typing
+import matplotlib.pyplot as plt
+nltk.download('stopwords')
+nltk.download('wordnet')
+from nltk.sentiment import SentimentAnalyzer
+from nltk.sentiment.vader import SentimentIntensityAnalyzer
+
+# open the file to save the review
+import csv
+sentiment = pd.read_csv('D:\Documents\Archaeology\Projects\Patmos\TextAnalysis\Sentiment\df.csv')
+sentiment.head()
+df2 = sentiment.to_csv('df2.csv')
+
+#import eng stopwords
+from nltk.corpus import stopwords
+stopcorpus: typing.List = stopwords.words('english')
+
+#make object for vader sentiment
+from vaderSentiment.vaderSentiment import SentimentIntensityAnalyzer
+sid = SentimentIntensityAnalyzer()
+
+#define get_sentiment: wrap around the polarity scores and return sentiment score
+def get_sentiment(text:str, analyser,desired_type:str='pos'):
+    # Get sentiment from text
+    sentiment_score = analyser.polarity_scores(df2['review'])
+    return sentiment_score[desired_type]
+
+#get sentiment scores
+
+def get_sentiment_scores(df2, data_column):
+    df2[f"{'review'} Positive Sentiment Score"] = df2['review'].astype(str).apply(lambda x: get_sentiment(x,sid,'pos'))
+    df2[f"{'review'} Negative Sentiment Score"] = df2['review'].astype(str).apply(lambda x: get_sentiment(x,sid,'neg'))
+    df2[f"{'review'} Neutral Sentiment Score"] = df2['review'].astype(str).apply(lambda x: get_sentiment(x,sid,'neu'))
+    df2[f"{'review'} Compound Sentiment Score"] = df2['review'].astype(str).apply(lambda x: get_sentiment(x,sid,'compound'))
+    return df
+
+text_sentiment = get_sentiment_scores(df2,0)
+display(get_sentiment_scores.sample(5))
+
